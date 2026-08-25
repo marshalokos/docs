@@ -1,5 +1,12 @@
 # GitHub Copilot Instructions
 
+## Project context
+
+- **Explorer** (`marshalokos/explorer`): Next.js + TypeScript Solana block explorer
+- Install with `npm install --legacy-peer-deps` (peer dep conflicts after removing `@bonfida/spl-name-service`)
+- Name service utilities live in `app/utils/spl-name-service.ts` (inline, no external package)
+- Solana terminology: use **cluster** not "network", **program** not "contract", **account** not "wallet"
+
 ## PR Descriptions
 
 When writing a pull request description, act as a P99 principal engineer. Prioritize information density and being easy to scan and grok quickly. Do not state the obvious. Do not justify what does not need justification. Explain clearly in few words as an adept technical leader would.
