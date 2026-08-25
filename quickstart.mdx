@@ -1,47 +1,53 @@
 ---
 title: "Quickstart"
-description: "Begin with a guide on the fastest path to a successful outcome"
+description: "Run Solana Explorer locally in under 5 minutes"
 ---
-
-Describe how someone begins using your product. What is the first thing they need to do? Are there any prerequisites?
-
-A quickstart should take someone from zero to using your product. They'll get a quick win and a sense of what they can accomplish.
 
 ## Prerequisites
 
-Before you begin, you must have:
-
-- Requirement one (for example, Node.js 18+, a free account, an API key)
-- Requirement two (for example, a compatible device, a compatible browser, a compatible operating system)
+- Node.js 18+
+- `pnpm` installed globally (`npm install -g pnpm`)
 
 ## Get started
 
 <Steps>
-  <Step title="Install">
-    Describe how to install your product or sign up.
-
+  <Step title="Clone the repo">
     ```bash
-    npm install your-package
+    git clone https://github.com/marshalokos/explorer.git
+    cd explorer
     ```
   </Step>
-  <Step title="Configure">
-    Describe any setup or configuration needed before first use.
+  <Step title="Install dependencies">
+    The project requires `--legacy-peer-deps` due to transitive peer dependency conflicts introduced
+    after removing `@bonfida/spl-name-service` (replaced with an inline implementation in `app/utils/spl-name-service.ts`).
 
     ```bash
-    your-cli init
+    npm install --legacy-peer-deps
     ```
   </Step>
-  <Step title="Run it">
-    Show the first thing a user does to see it working.
+  <Step title="Build">
+    ```bash
+    npx webpack
+    ```
+  </Step>
+  <Step title="Run">
+    Start the Next.js dev server:
 
     ```bash
-    your-cli start
+    npm run dev
     ```
+
+    Open [http://localhost:3000](http://localhost:3000) in your browser.
   </Step>
 </Steps>
 
 <Tip>
-  Give people a way to get help. This could be a link to a support page, a chat with a customer support agent, or a forum for your product.
-
-  Example: Need help? Reach out to us at [support@yourcompany.com](mailto:support@yourcompany.com).
+  To connect to a custom RPC endpoint, append `?cluster=custom&customUrl=https://your-rpc-url` to any Explorer URL.
 </Tip>
+
+## Name service
+
+`.sol` domain resolution is handled via an inline implementation in `app/utils/spl-name-service.ts`.
+This replaces the removed `@bonfida/spl-name-service` npm package and implements `getHashedName`,
+`getNameAccountKey`, `getNameOwner`, `performReverseLookup`, and `getFilteredProgramAccounts` directly
+using `@noble/hashes` and `@solana/web3.js`.
