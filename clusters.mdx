@@ -1,0 +1,52 @@
+---
+title: "Clusters"
+description: "Connect Explorer to Mainnet, Testnet, Devnet, or a custom RPC endpoint"
+---
+
+Explorer supports all standard Solana clusters and any custom RPC endpoint. You switch clusters
+using the cluster selector in the top-right corner of the UI, or by appending query parameters to any URL.
+
+## Available clusters
+
+| Cluster | Query parameter value | Default RPC |
+|---|---|---|
+| Mainnet Beta | `mainnet-beta` | `https://api.mainnet-beta.solana.com` |
+| Testnet | `testnet` | `https://api.testnet.solana.com` |
+| Devnet | `devnet` | `https://api.devnet.solana.com` |
+| Custom | `custom` | User-supplied URL |
+
+## Switching clusters via URL
+
+Append `?cluster=<value>` to any Explorer URL to load it on a specific cluster:
+
+```
+https://<your-explorer>/?cluster=devnet
+https://<your-explorer>/address/<pubkey>?cluster=testnet
+```
+
+## Custom RPC endpoint
+
+To connect to a private or third-party RPC node, use both `cluster=custom` and `customUrl`:
+
+```
+https://<your-explorer>/?cluster=custom&customUrl=https://your-rpc.example.com
+```
+
+<Tip>
+  Custom RPC URLs are stored in the browser's local storage, so they persist across page reloads.
+</Tip>
+
+## Local development
+
+When running Explorer locally, Devnet is a good starting point — it has free airdrops and is reset
+periodically. To use Devnet by default during development, open:
+
+```
+http://localhost:3000/?cluster=devnet
+```
+
+To target a local validator (e.g. `solana-test-validator`), use:
+
+```
+http://localhost:3000/?cluster=custom&customUrl=http://localhost:8899
+```

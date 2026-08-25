@@ -16,6 +16,13 @@
           "index",
           "quickstart"
         ]
+      },
+      {
+        "group": "Reference",
+        "pages": [
+          "clusters",
+          "name-service"
+        ]
       }
     ],
     "global": {

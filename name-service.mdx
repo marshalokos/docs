@@ -1,0 +1,61 @@
+---
+title: "Name service"
+description: "How Solana Explorer resolves .sol domains"
+---
+
+Explorer resolves `.sol` domains using an inline implementation of the Solana Name Service (SNS) protocol.
+The `@bonfida/spl-name-service` npm package was removed (it is no longer published) and replaced with
+[`app/utils/spl-name-service.ts`](https://github.com/marshalokos/explorer/blob/main/app/utils/spl-name-service.ts)
+in the Explorer source.
+
+## How it works
+
+SNS stores name records as on-chain accounts owned by the Name Program
+(`namesLPneVptA9Z5rqUDD9tMTWEJwofgaYwp8cawRkX`). Each record's address is a PDA derived from a
+SHA-256 hash of the name string (prefixed with `"SPL Name Service"`).
+
+The inline utility exposes these functions:
+
+| Function | Description |
+|---|---|
+| `getHashedName(name)` | SHA-256 hash of `"SPL Name Service" + name` |
+| `getNameAccountKey(hashedName, class?, parent?)` | Derives the PDA for a name record |
+| `getNameOwner(connection, nameAccountKey)` | Fetches and deserializes a name registry account |
+| `performReverseLookup(connection, nameAccount)` | Resolves a name account back to its string |
+| `getFilteredProgramAccounts(connection, programId, filters)` | Queries all accounts owned by a program with optional filters |
+
+## Name record layout
+
+Each name account stores a 96-byte header followed by variable-length data:
+
+```
+[0..32]   parentName  (PublicKey)
+[32..64]  owner       (PublicKey)
+[64..96]  class       (PublicKey)
+[96..]    data        (variable — for domain records: 4-byte LE length prefix + UTF-8 name)
+```
+
+## Reverse lookup
+
+To resolve a name account address back to its `.sol` domain string, Explorer:
+
+1. Hashes the account's base58 address with `getHashedName`
+2. Derives the reverse lookup PDA using the `REVERSE_LOOKUP_CLASS` (`33m47vH6Eav6jr5Ry86XjhRft2jRBLDnDgPSHoquXi2Z`)
+3. Reads the name from the data field of that account
+
+```ts
+const name = await performReverseLookup(connection, nameAccountPublicKey);
+// e.g. "bonfida.sol"
+```
+
+## Dependencies
+
+The implementation uses only packages already present in the Explorer:
+
+- [`@noble/hashes`](https://github.com/paulmillr/noble-hashes) — for `sha256`
+- [`@solana/web3.js`](https://github.com/solana-labs/solana-web3.js) — for `Connection`, `PublicKey`, etc.
+- [`bn.js`](https://github.com/indutny/bn.js/) — for reading the 4-byte LE length prefix
+
+<Note>
+  The `.sol` TLD is also resolved via `@onsol/tldparser` in `app/utils/domain-info.ts` for ANS (Alternative Name Service) lookups. The inline `spl-name-service.ts` handles the Bonfida SNS protocol specifically.
+</Note>
